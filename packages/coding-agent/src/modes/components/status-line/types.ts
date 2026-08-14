@@ -20,9 +20,7 @@ export interface StatusLineSegmentOptions {
 	git?: { showBranch?: boolean; showStaged?: boolean; showUnstaged?: boolean; showUntracked?: boolean };
 	time?: { format?: "12h" | "24h"; showSeconds?: boolean };
 	/**
-	 * `mode`:
-	 * - `"session"` (default): hit rate across the entire session (cumulative).
-	 * - `"recent"`: hit rate of the last assistant response only (real-time).
+	 * Unused; kept for backwards-compat. Use `cache_hit_recent` segment instead.
 	 */
 	cache_hit?: { mode?: "session" | "recent" };
 }

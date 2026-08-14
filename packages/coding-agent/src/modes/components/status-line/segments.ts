@@ -566,23 +566,24 @@ const cacheWriteSegment: StatusLineSegment = {
 const cacheHitSegment: StatusLineSegment = {
 	id: "cache_hit",
 	render(ctx) {
-		const mode = ctx.options.cache_hit?.mode ?? "session";
-		const source = mode === "recent" && ctx.lastUsage ? ctx.lastUsage : ctx.usageStats;
-		const { cacheRead, cacheWrite, input } = source;
+		const { cacheRead, cacheWrite, input } = ctx.usageStats;
 		if (!cacheRead) return { content: "", visible: false };
-
-		// Hit rate = cacheRead / total prompt tokens. The prompt is the sum of
-		// cacheRead (served from cache), cacheWrite (newly cached this turn) and
-		// input (uncached). Including uncached input keeps the denominator honest
-		// for Anthropic/OpenRouter; DeepSeek reports its miss as input with
-		// cacheWrite 0, so this still yields hit/(hit+miss).
-		const total = cacheRead + cacheWrite + input;
-
-		const rate = (cacheRead / total) * 100;
-		const rateStr = rate.toFixed(2);
-
+		const rate = (cacheRead / (cacheRead + cacheWrite + input)) * 100;
 		const parts: string[] = [theme.icon.cache];
-		parts.push(theme.fg("statusLineSpend", `${rateStr}%`));
+		parts.push(theme.fg("statusLineSpend", `${rate.toFixed(2)}%`));
+		return { content: parts.join(" "), visible: true };
+	},
+};
+
+const cacheHitRecentSegment: StatusLineSegment = {
+	id: "cache_hit_recent",
+	render(ctx) {
+		if (!ctx.lastUsage) return { content: "", visible: false };
+		const { cacheRead, cacheWrite, input } = ctx.lastUsage;
+		if (!cacheRead) return { content: "", visible: false };
+		const rate = (cacheRead / (cacheRead + cacheWrite + input)) * 100;
+		const parts: string[] = [theme.icon.cache];
+		parts.push(theme.fg("statusLineSpend", `${rate.toFixed(2)}%`));
 		return { content: parts.join(" "), visible: true };
 	},
 };
@@ -710,6 +711,7 @@ export const SEGMENTS: Record<StatusLineSegmentId, StatusLineSegment> = {
 	cache_read: cacheReadSegment,
 	cache_write: cacheWriteSegment,
 	cache_hit: cacheHitSegment,
+	cache_hit_recent: cacheHitRecentSegment,
 	session_name: sessionNameSegment,
 	usage: usageSegment,
 	collab: collabSegment,
