@@ -8,19 +8,30 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent"><img src="https://img.shields.io/npm/v/@oh-my-pi/pi-coding-agent?style=flat&colorA=222222&colorB=CB3837" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/@ranxianglei/omp-stable"><img src="https://img.shields.io/badge/npm-%40ranxianglei%2Fomp--stable-CB3837?style=flat&colorA=222222" alt="npm package"></a>
+  <a href="https://github.com/ranxianglei/oh-my-pi"><img src="https://img.shields.io/badge/fork-ranxianglei%2Foh--my--pi-58A6FF?style=flat&colorA=222222" alt="fork"></a>
   <a href="https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep-E05735?style=flat&colorA=222222" alt="Changelog"></a>
-  <a href="https://github.com/can1357/oh-my-pi/actions"><img src="https://img.shields.io/github/actions/workflow/status/can1357/oh-my-pi/ci.yml?style=flat&colorA=222222&colorB=3FB950" alt="CI"></a>
   <a href="https://github.com/can1357/oh-my-pi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/can1357/oh-my-pi?style=flat&colorA=222222&colorB=58A6FF" alt="License"></a>
   <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&colorA=222222&logo=typescript&logoColor=white" alt="TypeScript"></a>
   <a href="https://www.rust-lang.org"><img src="https://img.shields.io/badge/Rust-DEA584?style=flat&colorA=222222&logo=rust&logoColor=white" alt="Rust"></a>
   <a href="https://bun.sh"><img src="https://img.shields.io/badge/runtime-Bun-f472b6?style=flat&colorA=222222" alt="Bun"></a>
-  <a href="https://discord.gg/4NMW9cdXZa"><img src="https://img.shields.io/badge/Discord-5865F2?style=flat&colorA=222222&logo=discord&logoColor=white" alt="Discord"></a>
 </p>
 
-<p align="center">
-  Fork of <a href="https://github.com/badlogic/pi-mono">Pi</a> by <a href="https://github.com/mariozechner">@mariozechner</a> 
-</p>
+> [!IMPORTANT]
+> This is a **fork** of [can1357/oh-my-pi](https://github.com/can1357/oh-my-pi) (originally built on [Pi](https://github.com/badlogic/pi-mono) by [@mariozechner](https://github.com/mariozechner)).
+> It tracks upstream and adds a small set of custom patches. Install as `@ranxianglei/omp-stable`, command `omp-stable`.
+
+### Fork-specific changes
+
+- **`cache_hit` status bar segment — `"recent"` mode**: shows the cache hit rate of the last assistant response instead of the session-cumulative rate.
+
+  ```jsonc
+  // ~/.omp/settings.json
+  "statusLine.segmentOptions": {
+    "cache_hit": { "mode": "recent" }     // last response only
+    // "cache_hit": { "mode": "session" }  // default, cumulative
+  }
+  ```
 
 The most capable agent surface that ships. Continuously tuned by real-world use — complete out of the box, open all the way down.
 
@@ -34,79 +45,47 @@ The most capable agent surface that ships. Continuously tuned by real-world use 
 
 ## Install
 
-**macOS · Linux**
-
-```sh
-curl -fsSL https://omp.sh/install | sh
-```
-
-> **Alpine / musl:** the prebuilt musl binary links `libstdc++`/`libgcc` dynamically, which stock Alpine does not ship. Install them first: `apk add libstdc++ libgcc`.
-
-**Homebrew**
-
-```sh
-brew install can1357/tap/omp
-```
-
 **Bun (recommended)**
 
 ```sh
-bun install -g @oh-my-pi/pi-coding-agent
+bun install -g @ranxianglei/omp-stable
 ```
 
-**Nix**
+This installs the `omp-stable` command. Config lives in `~/.omp/` (same as upstream).
+
+**npm**
 
 ```sh
-# Run without installing
-nix run github:can1357/oh-my-pi
-
-# Or install into the active profile
-nix profile install github:can1357/oh-my-pi
+npm install -g @ranxianglei/omp-stable
 ```
 
-Flake consumers can use `packages.<system>.omp`, `overlays.default`, `nixosModules.default`, or `homeManagerModules.default`. A Home Manager configuration can install OMP and own its settings declaratively:
+> [!NOTE]
+> Requires Bun ≥ 1.3.14 as the runtime. If you don't have Bun:
+> ```sh
+> curl -fsSL https://bun.sh/install | bash
+> ```
 
-```nix
-{
-  inputs.omp.url = "github:can1357/oh-my-pi";
+> [!NOTE]
+> The upstream install methods (omp.sh installer, Homebrew, Nix, Windows PowerShell, mise) are not
+> available for this fork. Use `bun install -g` or `npm install -g` instead.
 
-  # In your Home Manager module:
-  imports = [ inputs.omp.homeManagerModules.default ];
-  programs.omp = {
-    enable = true;
-    settings.startup.quiet = true;
-  };
-}
-```
+### Shell completions
 
-**Windows (PowerShell)**
-
-```powershell
-irm https://omp.sh/install.ps1 | iex
-```
-
-**Pinned versions (mise)**
+`omp-stable` generates its own completion scripts for **bash**, **zsh**, and **fish**. Note: the completion output uses `omp` as the program name internally (a cosmetic quirk of the fork); alias or symlink as needed.
 
 ```sh
-mise use -g github:can1357/oh-my-pi
+# zsh — add to ~/.zshrc
+eval "$(omp-stable completions zsh)"
+
+# bash — add to ~/.bashrc
+eval "$(omp-stable completions bash)"
+
+# fish
+omp-stable completions fish > ~/.config/fish/completions/omp-stable.fish
 ```
 
 macOS · Linux · Windows · bun ≥ 1.3.14
 
-### Shell completions
-
-`omp` generates its own completion scripts for **bash**, **zsh**, and **fish** from the live command/flag metadata, so they never drift from the actual CLI. Subcommands, flags, and enum values complete statically; model names (`--model`, `--smol`, `--slow`, `--plan`) resolve against the bundled model catalog and `--resume` against your on-disk sessions.
-
-```sh
-# zsh — add to ~/.zshrc (or write the output into a file on your $fpath)
-eval "$(omp completions zsh)"
-
-# bash — add to ~/.bashrc
-eval "$(omp completions bash)"
-
-# fish
-omp completions fish > ~/.config/fish/completions/omp.fish
-```
 
 ## Every tool, _benchmaxxed_.
 

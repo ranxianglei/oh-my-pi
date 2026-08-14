@@ -1,21 +1,21 @@
 {
-  "type": "module",
-  "name": "@oh-my-pi/pi-coding-agent",
+  "name": "@ranxianglei/omp-stable",
   "version": "17.3.3",
-  "description": "Coding agent CLI with read, bash, edit, write tools and session management",
-  "homepage": "https://omp.sh",
+  "description": "Coding agent CLI with read, bash, edit, write tools and session management (fork with cache_hit recent mode)",
+  "homepage": "https://github.com/ranxianglei/oh-my-pi",
   "author": "Can Boluk",
   "contributors": [
-    "Mario Zechner"
+    "Mario Zechner",
+    "ranxianglei"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/ranxianglei/oh-my-pi.git",
     "directory": "packages/coding-agent"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/ranxianglei/oh-my-pi/issues"
   },
   "keywords": [
     "coding-agent",
@@ -28,7 +28,10 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "bin": {
-    "omp": "src/cli.ts"
+    "omp-stable": "src/cli.ts"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "bun scripts/build-binary.ts",
