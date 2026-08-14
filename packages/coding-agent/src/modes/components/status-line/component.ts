@@ -1627,6 +1627,20 @@ export class StatusLineComponent implements Component {
 			tokensPerSecond: this.#getTokensPerSecond(),
 		};
 
+		// Find the most recent assistant message with usage for "recent" cache-hit mode.
+		let lastUsage: { cacheRead: number; cacheWrite: number; input: number } | null = null;
+		for (let i = this.session.state.messages.length - 1; i >= 0; i--) {
+			const message = this.session.state.messages[i];
+			if (message?.role === "assistant" && message.usage) {
+				lastUsage = {
+					cacheRead: message.usage.cacheRead,
+					cacheWrite: message.usage.cacheWrite,
+					input: message.usage.input,
+				};
+				break;
+			}
+		}
+
 		let contextWindow = state.model?.contextWindow ?? this.session.model?.contextWindow ?? 0;
 		const breakdown = this.getCachedContextBreakdown();
 		let contextTokens = breakdown.usedTokens;
@@ -1685,6 +1699,7 @@ export class StatusLineComponent implements Component {
 			vibeMode: this.#vibeModeStatus,
 			collab: this.#collabStatus,
 			usageStats,
+			lastUsage,
 			contextPercent,
 			contextTokens,
 			contextWindow,
