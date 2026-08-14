@@ -566,7 +566,9 @@ const cacheWriteSegment: StatusLineSegment = {
 const cacheHitSegment: StatusLineSegment = {
 	id: "cache_hit",
 	render(ctx) {
-		const { cacheRead, cacheWrite, input } = ctx.usageStats;
+		const mode = ctx.options.cache_hit?.mode ?? "session";
+		const source = mode === "recent" && ctx.lastUsage ? ctx.lastUsage : ctx.usageStats;
+		const { cacheRead, cacheWrite, input } = source;
 		if (!cacheRead) return { content: "", visible: false };
 
 		// Hit rate = cacheRead / total prompt tokens. The prompt is the sum of

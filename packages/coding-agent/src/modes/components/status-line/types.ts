@@ -19,6 +19,12 @@ export interface StatusLineSegmentOptions {
 	path?: { abbreviate?: boolean; maxLength?: number; stripWorkPrefix?: boolean };
 	git?: { showBranch?: boolean; showStaged?: boolean; showUnstaged?: boolean; showUntracked?: boolean };
 	time?: { format?: "12h" | "24h"; showSeconds?: boolean };
+	/**
+	 * `mode`:
+	 * - `"session"` (default): hit rate across the entire session (cumulative).
+	 * - `"recent"`: hit rate of the last assistant response only (real-time).
+	 */
+	cache_hit?: { mode?: "session" | "recent" };
 }
 
 export interface StatusLineSettings {
@@ -92,6 +98,11 @@ export interface SegmentContext {
 		cost: number;
 		tokensPerSecond: number | null;
 	};
+	/**
+	 * Usage of the most recent assistant response, or null when none yet.
+	 * Enables the `"recent"` mode of the `cache_hit` segment.
+	 */
+	lastUsage: { cacheRead: number; cacheWrite: number; input: number } | null;
 	/** Context usage percent, or null when unknown (e.g. right after compaction). */
 	contextPercent: number | null;
 	contextTokens: number;
