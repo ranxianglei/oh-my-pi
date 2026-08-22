@@ -5,11 +5,12 @@
  * (see `cli/completion-gen.ts`), so it never drifts from the actual CLI surface.
  */
 
-import { APP_NAME, postmortem, VERSION } from "@oh-my-pi/pi-utils";
+import { postmortem } from "@oh-my-pi/pi-utils";
 import { Args, type CliConfig, Command, type CommandCtor } from "@oh-my-pi/pi-utils/cli";
 import { completionsHelp as commandHelp } from "../cli/command-help";
 import { buildSpec, generateCompletion, type Shell } from "../cli/completion-gen";
 import { commands } from "../cli-commands";
+import { FORK_BIN, FORK_VERSION } from "../fork-version";
 
 /** Entry name of the default command whose flags become top-level completions. */
 const ROOT_COMMAND = "launch";
@@ -26,7 +27,7 @@ export async function generateLiveCompletion(shell: Shell): Promise<string> {
 		aliasMap.set(entry.name, [...merged]);
 	}
 
-	const config: CliConfig = { bin: APP_NAME, version: VERSION, commands: map };
+	const config: CliConfig = { bin: FORK_BIN, version: FORK_VERSION, commands: map };
 	return generateCompletion(shell, buildSpec(config, ROOT_COMMAND, aliasMap));
 }
 
@@ -41,15 +42,15 @@ export default class Completions extends Command {
 	};
 
 	static examples = [
-		`# zsh — eval at startup, or write to a file in $fpath\n  eval "$(${APP_NAME} completions zsh)"`,
-		`# bash\n  eval "$(${APP_NAME} completions bash)"`,
-		`# fish\n  ${APP_NAME} completions fish > ~/.config/fish/completions/${APP_NAME}.fish`,
+		`# zsh — eval at startup, or write to a file in $fpath\n  eval "$(${FORK_BIN} completions zsh)"`,
+		`# bash\n  eval "$(${FORK_BIN} completions bash)"`,
+		`# fish\n  ${FORK_BIN} completions fish > ~/.config/fish/completions/${FORK_BIN}.fish`,
 	];
 
 	async run(): Promise<void> {
 		const shell = this.argv[0];
 		if (!isShell(shell)) {
-			process.stderr.write(`Usage: ${APP_NAME} completions <${SHELLS.join("|")}>\n`);
+			process.stderr.write(`Usage: ${FORK_BIN} completions <${SHELLS.join("|")}>\n`);
 			process.exitCode = 1;
 			return;
 		}

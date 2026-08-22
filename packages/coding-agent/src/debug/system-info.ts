@@ -3,7 +3,8 @@
  */
 
 import * as os from "node:os";
-import { formatBytes, getProjectDir, VERSION } from "@oh-my-pi/pi-utils";
+import { formatBytes, getProjectDir } from "@oh-my-pi/pi-utils";
+import { FORK_VERSION } from "../fork-version";
 
 export interface SystemInfo {
 	os: string;
@@ -66,7 +67,7 @@ export async function collectSystemInfo(): Promise<SystemInfo> {
 			free: os.freemem(),
 		},
 		versions: {
-			app: VERSION,
+			app: FORK_VERSION,
 			bun: Bun.version,
 			node: process.version,
 		},

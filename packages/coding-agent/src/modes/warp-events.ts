@@ -1,8 +1,8 @@
 import * as path from "node:path";
 import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
 import { isInsideTmux, wrapTmuxPassthrough } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
 import type { ExtensionContext, ExtensionFactory } from "../extensibility/extensions/types";
+import { FORK_VERSION } from "../fork-version";
 import { isSilentAbort, isUserInterruptAbort, SKILL_PROMPT_MESSAGE_TYPE } from "../session/messages";
 
 const WARP_CLI_AGENT_PROTOCOL_VERSION = 1;
@@ -61,7 +61,7 @@ export function createWarpEventEmitter(options: WarpEventEmitterOptions): WarpEv
 				session_id: options.sessionId,
 				cwd,
 				project: path.basename(cwd),
-				plugin_version: VERSION,
+			plugin_version: FORK_VERSION,
 			};
 			const osc = `\x1b]777;notify;${WARP_CLI_AGENT_SENTINEL};${JSON.stringify(body)}\x07`;
 			if (!isInsideTmux()) {

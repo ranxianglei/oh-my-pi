@@ -10,10 +10,11 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { $env, $which, APP_NAME, compareVersions, isEnoent, VERSION } from "@oh-my-pi/pi-utils";
+import { $env, $which, APP_NAME, compareVersions, isEnoent } from "@oh-my-pi/pi-utils";
 import chalk from "@oh-my-pi/pi-utils/chalk";
 import { withFileLock } from "@oh-my-pi/pi-utils/file-lock";
 import { $ } from "bun";
+import { FORK_VERSION } from "../fork-version";
 import { theme } from "../modes/theme/theme";
 import {
 	isTimeoutError,
@@ -171,7 +172,7 @@ function majorVersion(version: string): number {
  */
 export function shouldForceBinaryUpdate(
 	release: { version: string; dist?: ReleaseDist },
-	currentVersion: string = VERSION,
+	currentVersion: string = FORK_VERSION,
 ): boolean {
 	if (release.dist !== undefined) return release.dist === "binary";
 	return majorVersion(release.version) > majorVersion(currentVersion);
@@ -1713,7 +1714,7 @@ function installerHint(): string {
  * Run the update command.
  */
 export async function runUpdateCommand(opts: { force: boolean; check: boolean }): Promise<void> {
-	console.log(chalk.dim(`Current version: ${VERSION}`));
+	console.log(chalk.dim(`Current version: ${FORK_VERSION}`));
 
 	// Check for updates
 	let release: ReleaseInfo;
@@ -1724,7 +1725,7 @@ export async function runUpdateCommand(opts: { force: boolean; check: boolean })
 		process.exit(1);
 	}
 
-	const comparison = compareVersions(release.version, VERSION);
+	const comparison = compareVersions(release.version, FORK_VERSION);
 
 	if (comparison <= 0 && !opts.force) {
 		console.log(chalk.green(`${theme.status.success} Already up to date`));

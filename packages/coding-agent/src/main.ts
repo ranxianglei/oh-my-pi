@@ -20,7 +20,6 @@ import {
 	postmortem,
 	setInteractiveHost,
 	setProjectDir,
-	VERSION,
 } from "@oh-my-pi/pi-utils";
 import chalk from "@oh-my-pi/pi-utils/chalk";
 import { reset as resetCapabilities } from "./capability";
@@ -58,6 +57,7 @@ import { loadExtensions } from "./extensibility/extensions/loader";
 import { ExtensionRunner } from "./extensibility/extensions/runner";
 import type { ExtensionUIContext } from "./extensibility/extensions/types";
 import { scheduleMarketplaceAutoUpdate } from "./extensibility/plugins/marketplace-auto-update";
+import { FORK_VERSION } from "./fork-version";
 import { registerDaemonProjectPresence } from "./launch/presence";
 import { discoverStartupLspServers } from "./lsp/servers";
 import type { MCPManager } from "./mcp";
@@ -851,7 +851,7 @@ async function getChangelogForDisplay(
 
 	return resolveStartupChangelogForDisplay({
 		mode,
-		currentVersion: VERSION,
+		currentVersion: FORK_VERSION,
 		changelogPath: getChangelogPath(),
 	});
 }
@@ -1343,7 +1343,7 @@ export async function runRootCommand(
 		const notifs: (InteractiveModeNotify | null)[] = [];
 
 		if (parsedArgs.version) {
-			writeStartupNotice(parsedArgs, `${VERSION}\n`);
+			writeStartupNotice(parsedArgs, `${FORK_VERSION}\n`);
 			process.exit(0);
 		}
 
@@ -1944,7 +1944,7 @@ export async function runRootCommand(
 				stopStartupWatchdog();
 				await runRpcMode(session, mode === "rpc-ui" ? setToolUIContext : undefined, eventBus, rpcInput);
 			} else if (isInteractive) {
-				const versionCheckPromise = checkForNewVersion(VERSION).catch(() => undefined);
+				const versionCheckPromise = checkForNewVersion(FORK_VERSION).catch(() => undefined);
 				const startupChangelog = await startupChangelogPromise;
 
 				const modelScopeNotification = buildModelScopeNotification(
@@ -1970,7 +1970,7 @@ export async function runRootCommand(
 					logger.endTiming();
 					await runInteractiveMode(
 						session,
-						VERSION,
+						FORK_VERSION,
 						startupChangelog,
 						notifs,
 						versionCheckPromise,

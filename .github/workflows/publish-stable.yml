@@ -1,0 +1,54 @@
+name: publish-stable
+
+# Fork-specific — intentionally diverges from upstream workflows. Do not overwrite on upstream sync.
+# Publishes 12 sibling packages (@ranxianglei/*@18.0.0) + @ranxianglei/omp-stable to npmjs.org.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-stable-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'ranxianglei/omp-stable'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Download prebuilt native addon (linux-x64)
+        run: |
+          curl -fsSL --retry 3 -o packages/natives/native/pi_natives.linux-x64-modern.node \
+            "https://github.com/ranxianglei/omp-stable/releases/download/native-linux-x64/pi_natives.linux-x64-modern.node"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Configure npm auth
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish siblings + omp-stable
+        working-directory: packages/coding-agent
+        run: bun scripts/publish-siblings.ts --publish
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          gh release create "$TAG" --title "$TAG" \
+            --notes "Published @ranxianglei/omp-stable and 12 sibling packages to npm." || true
+        env:
+          GH_TOKEN: ${{ github.token }}
