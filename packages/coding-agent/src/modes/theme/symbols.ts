@@ -97,6 +97,8 @@ export type SymbolKey =
 	| "icon.agents"
 	| "icon.job"
 	| "icon.cache"
+	| "icon.cacheAvg"
+	| "icon.cacheRecent"
 	| "icon.cacheMiss"
 	| "icon.input"
 	| "icon.output"
@@ -440,6 +442,8 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"icon.agents": "👥",
 	"icon.job": "⚙",
 	"icon.cache": "💾",
+	"icon.cacheAvg": "📊",
+	"icon.cacheRecent": "📈",
 	"icon.cacheMiss": "⊘",
 	"icon.input": "⤵",
 	"icon.output": "⤴",
@@ -780,7 +784,11 @@ const NERD_SYMBOLS: SymbolMap = {
 	// pick:  (nf-fa-gear) | alt:  ⚙
 	"icon.job": "\uf013",
 	// pick:  | alt:  
+	// pick:  (nf-fa-chart_bar) | alt: 📊
 	"icon.cache": "\uf1c0",
+	// pick:  (nf-fa-chart_line) | alt: 📈
+	"icon.cacheAvg": "\uf080",
+	"icon.cacheRecent": "\uf201",
 	// pick:  (fa-ban) | alt: ⊘
 	"icon.cacheMiss": "\uf05e",
 	// pick:  | alt:  →
@@ -1124,6 +1132,8 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"icon.output": "out:",
 	"icon.throughput": "tok/s:",
 	"icon.cache": "cache",
+	"icon.cacheAvg": "avg:",
+	"icon.cacheRecent": "rt:",
 	"icon.cacheMiss": "!",
 	"icon.input": "in:",
 	"icon.host": "host",

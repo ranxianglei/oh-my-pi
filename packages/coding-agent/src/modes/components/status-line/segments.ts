@@ -611,7 +611,7 @@ const cacheHitSegment: StatusLineSegment = {
 		const { cacheRead, cacheWrite, input } = ctx.usageStats;
 		if (!cacheRead) return { content: "", visible: false };
 		const rate = (cacheRead / (cacheRead + cacheWrite + input)) * 100;
-		const parts: string[] = [theme.icon.cache];
+		const parts: string[] = [theme.icon.cacheAvg];
 		parts.push(theme.fg("statusLineSpend", `${rate.toFixed(2)}%`));
 		return { content: parts.join(" "), visible: true };
 	},
@@ -624,7 +624,7 @@ const cacheHitRecentSegment: StatusLineSegment = {
 		const { cacheRead, cacheWrite, input } = ctx.lastUsage;
 		if (!cacheRead) return { content: "", visible: false };
 		const rate = (cacheRead / (cacheRead + cacheWrite + input)) * 100;
-		const parts: string[] = [theme.icon.cache];
+		const parts: string[] = [theme.icon.cacheRecent];
 		parts.push(theme.fg("statusLineSpend", `${rate.toFixed(2)}%`));
 		return { content: parts.join(" "), visible: true };
 	},

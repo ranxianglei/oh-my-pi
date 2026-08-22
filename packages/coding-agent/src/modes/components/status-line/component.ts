@@ -22,6 +22,7 @@ import { calculateTokensPerSecond } from "../../../utils/token-rate";
 import { sanitizeStatusText } from "../../shared";
 import { theme } from "../../theme/theme";
 import { type CompactionBoundaries, computeCompactionBoundaries } from "../../utils/context-usage";
+import { assistantUsageIsBilled } from "../../utils/transcript-render-helpers";
 import {
 	type CodexResetFireworksEvent,
 	type CodexResetUsageSnapshot,
@@ -1631,7 +1632,7 @@ export class StatusLineComponent implements Component {
 		let lastUsage: { cacheRead: number; cacheWrite: number; input: number } | null = null;
 		for (let i = this.session.state.messages.length - 1; i >= 0; i--) {
 			const message = this.session.state.messages[i];
-			if (message?.role === "assistant" && message.usage) {
+			if (message?.role === "assistant" && message.usage && assistantUsageIsBilled(message.usage)) {
 				lastUsage = {
 					cacheRead: message.usage.cacheRead,
 					cacheWrite: message.usage.cacheWrite,

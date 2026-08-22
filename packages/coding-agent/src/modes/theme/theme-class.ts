@@ -524,6 +524,8 @@ export class Theme {
 			agents: this.#symbols["icon.agents"],
 			job: this.#symbols["icon.job"],
 			cache: this.#symbols["icon.cache"],
+			cacheAvg: this.#symbols["icon.cacheAvg"],
+			cacheRecent: this.#symbols["icon.cacheRecent"],
 			cacheMiss: this.#symbols["icon.cacheMiss"],
 			input: this.#symbols["icon.input"],
 			output: this.#symbols["icon.output"],

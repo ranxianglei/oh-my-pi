@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { Settings } from "../../../../src/config/settings";
+import { Settings, settings } from "../../../../src/config/settings";
 import { StatusLineComponent } from "../../../../src/modes/components/status-line/component";
 import { loadTheme } from "../../../../src/modes/theme/loader";
-import { getThemeByName, setThemeInstance } from "../../../../src/modes/theme/theme";
+import { getThemeByName, setThemeInstance, theme } from "../../../../src/modes/theme/theme";
 import type { AgentSession } from "../../../../src/session/agent-session";
 
 // The cost assertions below care about how the two costs are rendered, not about
@@ -184,5 +184,46 @@ describe("StatusLineComponent", () => {
 		} finally {
 			setThemeInstance(baseTheme);
 		}
+	});
+	it("does not let a zero-usage assistant message shadow the last billed usage", () => {
+		const prevPreset = settings.get("statusLine.preset");
+		const prevLeftSegments = settings.get("statusLine.leftSegments");
+		settings.set("statusLine.preset", "custom");
+		settings.set("statusLine.leftSegments", ["path", "cache_hit_recent"]);
+		try {
+			const realMsg = {
+				role: "assistant",
+				timestamp: 1,
+				content: [{ type: "text", text: "real answer" }],
+				usage: { input: 1, output: 5, cacheRead: 99, cacheWrite: 0 },
+			};
+			// Synthetic interrupted-turn abort record: truthy usage object, all zeros.
+			const zeroMsg = {
+				role: "assistant",
+				timestamp: 2,
+				content: [{ type: "text", text: "interrupted" }],
+				usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+			};
+			const session = makeSessionWithLastMessage(realMsg) as unknown as AgentSession;
+			// Mock returns a plain object; the AgentSession cast hides that messages is a plain array.
+			const messages = session.state.messages as unknown[];
+			messages.push(zeroMsg);
+
+			const statusLine = new StatusLineComponent(session);
+			const stripped = statusLine
+				.getTopBorder(WIDE_ENOUGH_FOR_COST_SEGMENT)
+				.content.replace(/\x1b\[[0-9;]*m/g, "");
+
+			// cache_hit_recent must reflect the real turn (99/100), not the zero-usage message.
+			expect(stripped).toContain("📈 99.00%");
+		} finally {
+			settings.set("statusLine.preset", prevPreset);
+			settings.set("statusLine.leftSegments", prevLeftSegments);
+		}
+	});
+
+	it("uses distinct icons for cumulative and recent cache-hit segments", () => {
+		expect(theme.icon.cacheAvg).toBe("📊");
+		expect(theme.icon.cacheRecent).toBe("📈");
 	});
 });
