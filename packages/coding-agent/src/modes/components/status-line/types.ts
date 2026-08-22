@@ -108,10 +108,10 @@ export interface SegmentContext {
 		tokensPerSecond: number | null;
 	};
 	/**
-	 * Usage of the most recent assistant response, or null when none yet.
-	 * Enables the `"recent"` mode of the `cache_hit` segment.
+	 * Usage of the most recent assistant response, or null/undefined when none yet.
+	 * Enables the `cache_hit_recent` segment.
 	 */
-	lastUsage: { cacheRead: number; cacheWrite: number; input: number } | null;
+	lastUsage?: { cacheRead: number; cacheWrite: number; input: number } | null;
 	/** Context usage percent, or null when unknown (e.g. right after compaction). */
 	contextPercent: number | null;
 	contextTokens: number;
