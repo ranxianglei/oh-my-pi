@@ -28,8 +28,9 @@ jobs:
 
       - name: Download prebuilt native addon (linux-x64)
         run: |
-          curl -fsSL --retry 3 -o packages/natives/native/pi_natives.linux-x64-modern.node \
-            "https://github.com/ranxianglei/omp-stable/releases/download/native-linux-x64/pi_natives.linux-x64-modern.node"
+          curl -fsSL --retry 3 -o /tmp/pi_natives.linux-x64-modern.node.gz \
+            "https://github.com/ranxianglei/omp-stable/releases/download/native-linux-x64/pi_natives.linux-x64-modern.node.gz"
+          gunzip -c /tmp/pi_natives.linux-x64-modern.node.gz > packages/natives/native/pi_natives.linux-x64-modern.node
 
       - name: Install dependencies
         run: bun install
