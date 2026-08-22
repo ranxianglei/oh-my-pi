@@ -26,6 +26,22 @@ The most capable agent surface that ships. Continuously tuned by real-world use 
 
 **60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops · **~80k** lines of Rust core.
 
+> [!IMPORTANT]
+> This is a **fork** of [can1357/oh-my-pi](https://github.com/can1357/oh-my-pi) (originally built on [Pi](https://github.com/badlogic/pi-mono) by [@mariozechner](https://github.com/mariozechner)).
+> It tracks upstream master and adds a small set of custom patches. Install as `@ranxianglei/omp-stable`; the command is `omp-stable`.
+
+### Fork-specific changes
+
+- **`cache_hit_recent` status-line segment** — real-time cache hit rate for the *last* assistant response (`cacheRead / (cacheRead + cacheWrite + input)`), as opposed to the session-cumulative `cache_hit` segment. Hidden until a response with usage data exists.
+
+  ```jsonc
+  // ~/.omp/settings.json
+  "statusLine": {
+    "leftSegments": ["cache_hit", "cache_hit_recent"]
+  }
+  ```
+
+
 > [!NOTE]
 > Pull requests are **temporarily open to everyone** as a trial. We previously
 > required a vouch before accepting PRs; that requirement is lifted for now
@@ -34,78 +50,42 @@ The most capable agent surface that ships. Continuously tuned by real-world use 
 
 ## Install
 
-**macOS · Linux**
-
-```sh
-curl -fsSL https://omp.sh/install | sh
-```
-
-> **Alpine / musl:** the prebuilt musl binary links `libstdc++`/`libgcc` dynamically, which stock Alpine does not ship. Install them first: `apk add libstdc++ libgcc`.
-
-**Homebrew**
-
-```sh
-brew install can1357/tap/omp
-```
-
 **Bun (recommended)**
 
 ```sh
-bun install -g @oh-my-pi/pi-coding-agent
+bun install -g @ranxianglei/omp-stable
 ```
 
-**Nix**
+**npm**
 
 ```sh
-# Run without installing
-nix run github:can1357/oh-my-pi
-
-# Or install into the active profile
-nix profile install github:can1357/oh-my-pi
+npm install -g @ranxianglei/omp-stable
 ```
 
-Flake consumers can use `packages.<system>.omp`, `overlays.default`, `nixosModules.default`, or `homeManagerModules.default`. A Home Manager configuration can install OMP and own its settings declaratively:
+This installs the `omp-stable` command. Config lives in `~/.omp/` (same as upstream).
 
-```nix
-{
-  inputs.omp.url = "github:can1357/oh-my-pi";
+> [!NOTE]
+> Requires Bun ≥ 1.3.14 as the runtime. If you don't have Bun:
+> ```sh
+> curl -fsSL https://bun.sh/install | bash
+> ```
 
-  # In your Home Manager module:
-  imports = [ inputs.omp.homeManagerModules.default ];
-  programs.omp = {
-    enable = true;
-    settings.startup.quiet = true;
-  };
-}
-```
-
-**Windows (PowerShell)**
-
-```powershell
-irm https://omp.sh/install.ps1 | iex
-```
-
-**Pinned versions (mise)**
-
-```sh
-mise use -g github:can1357/oh-my-pi
-```
-
-macOS · Linux · Windows · bun ≥ 1.3.14
+> [!NOTE]
+> The upstream install methods (omp.sh installer, Homebrew, Nix, Windows PowerShell, mise) install **upstream**, not this fork — use `bun install -g` or `npm install -g` above instead.
 
 ### Shell completions
 
-`omp` generates its own completion scripts for **bash**, **zsh**, and **fish** from the live command/flag metadata, so they never drift from the actual CLI. Subcommands, flags, and enum values complete statically; model names (`--model`, `--smol`, `--slow`, `--plan`) resolve against the bundled model catalog and `--resume` against your on-disk sessions.
+`omp-stable` generates its own completion scripts for **bash**, **zsh**, and **fish** from the live command/flag metadata, so they never drift from the actual CLI. Subcommands, flags, and enum values complete statically; model names (`--model`, `--smol`, `--slow`, `--plan`) resolve against the bundled model catalog and `--resume` against your on-disk sessions.
 
 ```sh
 # zsh — add to ~/.zshrc (or write the output into a file on your $fpath)
-eval "$(omp completions zsh)"
+eval "$(omp-stable completions zsh)"
 
 # bash — add to ~/.bashrc
-eval "$(omp completions bash)"
+eval "$(omp-stable completions bash)"
 
 # fish
-omp completions fish > ~/.config/fish/completions/omp.fish
+omp-stable completions fish > ~/.config/fish/completions/omp-stable.fish
 ```
 
 ## Every tool, _benchmaxxed_.
