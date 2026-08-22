@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Publish the fork's sibling packages as @ranxianglei/*@18.0.0, then republish
- * @ranxianglei/omp-stable@18.0.2 wired to them via npm alias dependencies.
+ * @ranxianglei/omp-stable@18.0.3 wired to them via npm alias dependencies.
  *
  * Why this exists: dist/cli.js externalizes every @oh-my-pi/* import, so an
  * installed tree needs working copies of the 12 sibling packages our source
@@ -21,7 +21,7 @@
  * because the prebuilt pi-natives .node bakes in a version sentinel
  * (__piNativesV18_0_0) that the loader validates against the installed
  * package.json version; a mismatched version rejects the addon. omp-stable
- * keeps its own independent line (18.0.2).
+ * keeps its own independent line (18.0.3).
  *
  * Steps:
  *   1. Each of the 12 siblings (topological order): rewrite name + alias
@@ -31,7 +31,7 @@
  *      tarball (the addon ships via its embedded archive) and re-runs
  *      gen:native so the embedded addon carries the published identity.
  *   2. Re-run publish-stable.ts --dry-run to produce the resolved omp-stable
- *      tarball, repack it as 18.0.2 with aliased sibling deps, publish.
+ *      tarball, repack it as 18.0.3 with aliased sibling deps, publish.
  *
  * Usage (from packages/coding-agent):
  *   bun scripts/publish-siblings.ts            # dry run: stage tarballs only
@@ -45,7 +45,7 @@ import { fileURLToPath } from "node:url";
 
 const SCOPE = "@ranxianglei";
 const SIBLING_VERSION = "18.0.0";
-const STABLE_VERSION = "18.0.2";
+const STABLE_VERSION = "18.0.3";
 const STABLE_NAME = "@ranxianglei/omp-stable";
 // Topological order over the 12 siblings coding-agent depends on.
 const SIBLINGS = [
